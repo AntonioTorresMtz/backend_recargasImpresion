@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://prontipagos.mx/tae/ticket/', 'https://prontipagos.mx'],
+    'allowed_origins' => ['https://prontipagos.mx/tae/ticket/', 'https://prontipagos.mx', "localhost"],
 
     'allowed_origins_patterns' => [],
 

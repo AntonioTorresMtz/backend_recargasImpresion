@@ -19,6 +19,7 @@ class RecargaController extends Controller
     public function store(Request $request)
     {
         // Accede a los datos del JSON recibido
+        print('Se intento la conexion');
         $data = $request->json()->all();
         $request->validate([
             'amount' => 'required',
@@ -45,10 +46,9 @@ class RecargaController extends Controller
             case '460288':
                 $recarga->FK_terminal = 1;
                 break;
-        }
+        }        
         $recarga->FK_compania = $data['telcelid'];
-        $recarga->fecha = $data['responsetime'];
-
+        $recarga->fecha_insercion = $data['responsetime'];
         $recarga->save();
         $this->Imprimir($data);
         return response()->json($recarga, 201);
@@ -58,7 +58,7 @@ class RecargaController extends Controller
     public function Imprimir($data)
     {
         // Crear una instancia del conector de impresión de Windows
-        $connector = new WindowsPrintConnector("POS58 Printer");
+        $connector = new WindowsPrintConnector("POS58");
 
         // Crear una instancia de la impresora
         $printer = new Printer($connector);
@@ -66,8 +66,8 @@ class RecargaController extends Controller
         // Realizar las operaciones de impresión
         $printer->setJustification(Printer::JUSTIFY_CENTER);
         //$printer->setFontSize(2, 2);
-        $printer->text("Center Accesories\n");
-        $printer->text("Hidalgo #151, Ario de Rosales\n");
+        $printer->text("TecnoMovil\n");
+        $printer->text("Guerrero #158, Ario de Rosales\n");
         //$printer->text(date('d-m-Y') . "  " . date('H:i:s') . "\n");       
         $printer->text("TICKET DE COMPRA\n");
         $printer->setJustification(Printer::JUSTIFY_LEFT);
@@ -75,12 +75,13 @@ class RecargaController extends Controller
         $printer->text("Concepto: " . $data['titleTicket'] . "\n");
         $printer->text("Numero: " . $data['phone'] . "\n");
         $printer->text("Monto: $" . number_format($data['amount'], 2, ".", ",") . "\n");
-        $printer->text("Fecha: " . $data['responsetime'] . '\n');
-        $printer->text("Terminal: " . $data['terminal'] . '\n');
-        $printer->text("Estatus: OK" . '\n');
+        $printer->text("Fecha: " . $data['responsetime'] . "\n");
+        $printer->text("Terminal: " . $data['terminal'] . "\n");
+        $printer->text("Estatus: OK" . "\n");
         $printer->text("\n");
         
         $printer->setJustification(Printer::JUSTIFY_CENTER);
+        $printer->text("Dudas o aclaraciones unicamente con su ticket de compra\n");
         $printer->text("Gracias por su compra :)\n");
         $printer->cut();
 
@@ -91,6 +92,11 @@ class RecargaController extends Controller
     public function show(Recarga $recarga)
     {
         return $recarga;
+    }
+
+    public function prueba()
+    {
+        return response()->json(['message' => 'Hay conexión'], 200);
     }
 
 
